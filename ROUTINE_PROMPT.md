@@ -7,7 +7,7 @@
 - repo: このリポジトリ（clone 済み）
 - model: claude-sonnet-5
 - allowed_tools: Bash, Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
-- MCP: Gmail（ダイジェスト送信用）
+- MCP: なし（メール通知は使わない。サイト更新のみ）
 
 ---
 
@@ -84,20 +84,11 @@ build.py か inject.py がエラーで落ちたら、原因を直すか、news.j
   git commit -m "market update <YYYY-MM-DD HH:MM JST>"
   git push
 差分が news.json / docs / data.json だけであることを git diff --stat で確認してから push。
-
-## 5. ダイジェストをメール
-Gmail で taiyo.morimoto.jobby@gmail.com 宛に送信。件名「部材シグナル 市況更新 M/D HH:MM」。
-本文はプレーンテキスト、スマホで30秒で読める分量（400字以内）、見出しは【】、1項目1行:
-【要点】summary を1〜2文
-【逼迫が動いた区分】categoryNotes を更新した区分名と一言（最大4行）
-【相場】銅・金・CCL・DRAM/NAND の水準と変化（各1行）
-【リスク】地政学・供給障害があれば1〜2行
-【リンク】GitHub Pages のURL
-本文の末尾に「返信で『これ要らない』『これ足して』と書けば次回から調整します」と1行。
+push すると GitHub Pages（または Actions）が自動でサイトを再デプロイする。メール等の通知はしない。
 
 # 注意
 - サイトの数値ロジック（build.py の重み・しきい値、template.html）は変更しない。触るのは news.json だけ。
 - 出典の言えない数字を書かない。市況は「兆候の提示」であって予測ではない。
-- 途中で詰まったら、無理に完遂せず、news.json をできた範囲で更新し、build/inject/push まで通し、
-  メールに「今回取得できなかった項目」を1行添える。
+- 途中で詰まったら、無理に完遂せず、news.json をできた範囲で更新し、build/inject/push まで通す。
+  取得できなかった項目は news.json の summary 末尾に「（未取得: ○○）」と短く残す。
 ```
