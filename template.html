@@ -1,0 +1,864 @@
+<title>部材シグナル</title>
+<meta name="description" content="電子部品・原材料の相場とサプライチェーン統計から、材料区分ごとの逼迫度とリードタイム延伸の兆候を一望する購買向けモニター。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f3f5f1; --surface:#ffffff; --surface-2:#eceee8; --raise:#f8f9f6;
+  --ink:#1b201d; --ink-2:#576059; --ink-3:#8a918a;
+  --line:#dde1da; --line-2:#cbd0c8;
+  --accent:#12564f; --accent-ink:#0c3f39;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#7a5cd0; --ref:#9aa19a;
+  --band:rgba(196,88,42,.055); --band-line:rgba(196,88,42,.30);
+  --lv0:#1f7a6b; --lv1:#5b6b57; --lv2:#b7791f; --lv3:#c2562a; --lv4:#b23b32;
+  --lv0-bg:rgba(31,122,107,.12); --lv1-bg:rgba(91,107,87,.13); --lv2-bg:rgba(183,121,31,.15); --lv3-bg:rgba(194,86,42,.15); --lv4-bg:rgba(178,59,50,.16);
+  --rise:#b5461f; --cool:#1f6d9b; --flat:#6c736c;
+  --shadow:0 1px 2px rgba(24,28,24,.05), 0 8px 24px -12px rgba(24,28,24,.14);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#12140f; --surface:#1a1d17; --surface-2:#23271f; --raise:#20241c;
+    --ink:#edefe8; --ink-2:#a7afa5; --ink-3:#79807a;
+    --line:#2c312a; --line-2:#3a4038;
+    --accent:#54b8ab; --accent-ink:#7fd0c4;
+    --s1:#3987e5; --s2:#e0713f; --s3:#33b98c; --s4:#c98500; --s5:#d98cb0; --s6:#9d8ff0; --ref:#7c837c;
+    --band:rgba(224,113,63,.075); --band-line:rgba(224,113,63,.32);
+    --lv0:#4bbfae; --lv1:#8c9b86; --lv2:#dca43f; --lv3:#e88a5c; --lv4:#e8756a;
+    --lv0-bg:rgba(75,191,174,.14); --lv1-bg:rgba(140,155,134,.14); --lv2-bg:rgba(220,164,63,.16); --lv3-bg:rgba(232,138,92,.16); --lv4-bg:rgba(232,117,106,.17);
+    --rise:#e6875c; --cool:#63b4dc; --flat:#8a918a;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.55);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#12140f; --surface:#1a1d17; --surface-2:#23271f; --raise:#20241c;
+  --ink:#edefe8; --ink-2:#a7afa5; --ink-3:#79807a;
+  --line:#2c312a; --line-2:#3a4038;
+  --accent:#54b8ab; --accent-ink:#7fd0c4;
+  --s1:#3987e5; --s2:#e0713f; --s3:#33b98c; --s4:#c98500; --s5:#d98cb0; --s6:#9d8ff0; --ref:#7c837c;
+  --band:rgba(224,113,63,.075); --band-line:rgba(224,113,63,.32);
+  --lv0:#4bbfae; --lv1:#8c9b86; --lv2:#dca43f; --lv3:#e88a5c; --lv4:#e8756a;
+  --lv0-bg:rgba(75,191,174,.14); --lv1-bg:rgba(140,155,134,.14); --lv2-bg:rgba(220,164,63,.16); --lv3-bg:rgba(232,138,92,.16); --lv4-bg:rgba(232,117,106,.17);
+  --rise:#e6875c; --cool:#63b4dc; --flat:#8a918a;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0; background:var(--bg); color:var(--ink);
+  font-family:"IBM Plex Sans JP", system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+  font-size:15px; line-height:1.65; letter-spacing:.01em; -webkit-font-smoothing:antialiased;}
+.mono{font-family:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-variant-numeric:tabular-nums}
+.wrap{max-width:1060px; margin:0 auto; padding:32px 22px 80px}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid color-mix(in srgb, var(--accent) 35%, transparent)}
+a:hover{border-bottom-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+
+header{display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap}
+.brand{display:flex; gap:14px; align-items:flex-start}
+.brand .bar{width:5px; align-self:stretch; min-height:46px; background:var(--accent); border-radius:3px}
+h1{font-size:22px; font-weight:600; margin:0 0 3px; letter-spacing:.02em}
+.tagline{color:var(--ink-2); font-size:13.5px; margin:0; max-width:56ch}
+.updated{font-size:12px; color:var(--ink-3); text-align:right; line-height:1.5}
+.updated b{color:var(--ink-2); font-weight:500}
+
+section{margin-top:32px}
+.eyebrow{font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); margin:0 0 6px}
+.sub{font-size:12.5px; color:var(--ink-3); margin:0 0 14px}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow)}
+
+.signal-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px}
+.tile{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:15px 16px 13px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:7px}
+.tile .k{font-size:12px; color:var(--ink-2); font-weight:500}
+.tile .v{font-size:26px; font-weight:500; line-height:1; display:flex; align-items:baseline; gap:6px}
+.tile .v small{font-size:12px; color:var(--ink-3)}
+.chip{align-self:flex-start; font-size:11.5px; font-weight:600; padding:2px 9px; border-radius:999px; letter-spacing:.02em; display:inline-flex; align-items:center; gap:5px}
+.chip::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor}
+.lv0{color:var(--lv0); background:var(--lv0-bg)} .lv1{color:var(--lv1); background:var(--lv1-bg)}
+.lv2{color:var(--lv2); background:var(--lv2-bg)} .lv3{color:var(--lv3); background:var(--lv3-bg)}
+.lv4{color:var(--lv4); background:var(--lv4-bg)}
+.read{margin:16px 0 0; padding:15px 17px; background:var(--raise); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:8px; font-size:14px; line-height:1.7}
+.read .num{color:var(--rise); font-weight:600}
+
+/* news */
+.news{padding:16px 18px}
+.news .nhead{display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap}
+.news .nstamp{font-size:11.5px; color:var(--ink-3)}
+.news .nsum{font-size:13.5px; line-height:1.7; margin:8px 0 0; color:var(--ink)}
+.spotrow{display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 4px}
+.spot{background:var(--raise); border:1px solid var(--line); border-radius:8px; padding:7px 11px; font-size:12px; min-width:150px}
+.spot .sl{color:var(--ink-2); font-weight:500}
+.spot .sv{font-weight:600; margin:1px 0}
+.spot .sc{font-size:11px}
+.spot .sn{font-size:10.5px; color:var(--ink-3); margin-top:2px; line-height:1.4}
+.hlines{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:8px}
+.hl{display:grid; grid-template-columns:auto 1fr; gap:11px; padding:11px 13px; background:var(--raise); border:1px solid var(--line); border-radius:9px; border-left:3px solid var(--ink-3); font-size:13px}
+.hl.sev-high{border-left-color:var(--lv4)} .hl.sev-med{border-left-color:var(--lv2)} .hl.sev-low{border-left-color:var(--lv1)}
+.hl .thm{font-size:10px; font-weight:600; letter-spacing:.04em; color:var(--ink-3); white-space:nowrap; padding-top:2px}
+.hl .htitle{font-weight:600; color:var(--ink)}
+.hl .hdet{color:var(--ink-2); margin-top:3px; font-size:12.5px; line-height:1.65}
+.hl .hmeta{color:var(--ink-3); font-size:10.5px; margin-top:4px}
+.hl .hcats{margin-top:4px}
+.hl .hcats span{font-size:10px; color:var(--ink-3); border:1px solid var(--line-2); border-radius:999px; padding:0 6px; margin-right:4px; cursor:pointer}
+.geo{margin-top:12px; padding-top:12px; border-top:1px solid var(--line)}
+.geo h4{margin:0 0 6px; font-size:12px; color:var(--accent-ink)}
+.geo li{font-size:12.5px; color:var(--ink-2); margin-bottom:6px; line-height:1.6}
+.catnote{margin:12px 0 0; padding:11px 13px; background:var(--lv2-bg); border:1px solid var(--line); border-left:3px solid var(--lv2); border-radius:8px; font-size:12.5px; line-height:1.65}
+.catnote b{color:var(--lv2)}
+.hm-flag{font-size:9.5px; font-weight:600; color:var(--lv3); background:var(--lv3-bg); border-radius:999px; padding:0 5px; margin-left:6px; vertical-align:middle}
+
+/* heatmap */
+.hm-controls{display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap}
+.seg{display:inline-flex; background:var(--surface-2); border-radius:8px; padding:2px}
+.seg button{appearance:none; border:none; background:none; font:inherit; font-size:12px; cursor:pointer; padding:4px 10px; border-radius:6px; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(24,28,24,.12); font-weight:500}
+.heatmap{display:flex; flex-direction:column; gap:6px}
+.hm-row{display:grid; grid-template-columns:minmax(140px,1.4fr) 76px minmax(90px,1fr) 72px 62px 70px; gap:11px; align-items:center;
+  background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px 13px; cursor:pointer; text-align:left; font:inherit; color:inherit; width:100%; box-shadow:var(--shadow)}
+.hm-row:hover{border-color:var(--line-2)}
+.hm-row[aria-current="true"]{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent), var(--shadow)}
+.hm-row .nm{font-weight:600; font-size:13.5px}
+.hm-row .ds{font-size:11px; color:var(--ink-3); font-weight:400; margin-top:1px; line-height:1.4}
+.hm-row .conf{font-size:10px; color:var(--ink-3); margin-top:3px}
+.scorebar{position:relative; height:22px; border-radius:5px; overflow:hidden; background:linear-gradient(90deg,var(--lv0-bg),var(--lv1-bg) 30%,var(--lv2-bg) 55%,var(--lv3-bg) 75%,var(--lv4-bg))}
+.scorebar .mk{position:absolute; top:-2px; bottom:-2px; width:3px; background:var(--ink); border-radius:2px}
+.scorebar .sc{position:absolute; left:6px; top:50%; transform:translateY(-50%); font-size:11px; font-weight:600}
+.hm-spark{display:block}
+.hm-num{font-size:12px; text-align:right}
+.hm-num .dl{font-size:10.5px; display:block; color:var(--ink-3)}
+.delta.up{color:var(--rise)} .delta.down{color:var(--cool)} .delta.flat{color:var(--ink-3)}
+@media (max-width:720px){
+  .hm-row{grid-template-columns:1fr 76px 72px; grid-auto-rows:auto; gap:6px 10px}
+  .hm-row .scorebar{grid-column:1/-1; order:5} .hm-spark-cell{display:none}
+}
+
+/* detail */
+.detail{padding:18px 19px}
+.detail h3{margin:0; font-size:16px; font-weight:600}
+.detail .dmeta{font-size:12px; color:var(--ink-3); margin:2px 0 14px}
+.gauge-row{display:flex; gap:18px; align-items:center; flex-wrap:wrap; margin-bottom:6px}
+.gauge{flex:1; min-width:240px}
+.gauge .track{position:relative; height:14px; border-radius:7px; background:linear-gradient(90deg,var(--lv0) 0%,var(--lv1) 25%,var(--lv2) 52%,var(--lv3) 74%,var(--lv4) 100%); opacity:.9}
+.gauge .mk{position:absolute; top:-4px; width:4px; height:22px; background:var(--ink); border-radius:2px; box-shadow:0 0 0 2px var(--surface)}
+.gauge .scale{display:flex; justify-content:space-between; font-size:10px; color:var(--ink-3); margin-top:4px}
+.gauge-big{text-align:center; min-width:120px}
+.gauge-big .n{font-size:34px; font-weight:500; line-height:1}
+.gauge-big .n small{font-size:13px; color:var(--ink-3)}
+.dread{margin:12px 0 0; font-size:13.5px; line-height:1.7; color:var(--ink)}
+.basket{list-style:none; margin:14px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:8px}
+.basket li{font-size:12px; background:var(--raise); border:1px solid var(--line); border-radius:7px; padding:6px 10px; display:flex; gap:8px; align-items:center}
+.basket .w{color:var(--ink-3); font-size:10.5px}
+.basket .y{font-weight:600}
+
+.chart-head{display:flex; justify-content:space-between; align-items:flex-start; gap:14px; padding:2px 2px 8px; flex-wrap:wrap}
+.chart-head .t{font-size:13px; font-weight:600; color:var(--ink-2)}
+.controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.chart-wrap{position:relative}
+svg.chart{display:block; width:100%; height:auto; overflow:visible}
+.chart text{font-family:"IBM Plex Mono", monospace; fill:var(--ink-3)}
+.chart .axis-line{stroke:var(--line-2); stroke-width:1}
+.chart .grid{stroke:var(--line); stroke-width:1}
+.chart .zero{stroke:var(--line-2); stroke-width:1.5}
+.chart .serie{fill:none; stroke-width:2; stroke-linejoin:round; stroke-linecap:round}
+.chart .serie.ref{stroke-width:1.5; stroke-dasharray:2 4}
+.chart .band{fill:var(--band)}
+.chart .band-edge{stroke:var(--band-line); stroke-width:1; stroke-dasharray:3 3}
+.chart .band-num{fill:var(--rise); font-size:10px; font-weight:500}
+.chart .end-label{font-size:11px; font-weight:500}
+.chart .cross{stroke:var(--ink-3); stroke-width:1; stroke-dasharray:3 3}
+.chart .dot{stroke:var(--surface); stroke-width:1.5}
+.tt{position:absolute; pointer-events:none; z-index:5; background:var(--surface); border:1px solid var(--line-2); border-radius:8px; box-shadow:var(--shadow); padding:8px 10px; font-size:12px; min-width:140px; opacity:0; transition:opacity .1s}
+.tt .tt-d{color:var(--ink-3); font-size:11px; margin-bottom:4px}
+.tt .tt-r{display:flex; justify-content:space-between; gap:14px; align-items:center}
+.tt .tt-r .sw{width:8px; height:8px; border-radius:2px; flex:none; margin-right:5px}
+.tt .tt-r span:first-child{display:flex; align-items:center; color:var(--ink-2)}
+.legend{display:flex; gap:14px; flex-wrap:wrap; padding:8px 2px 2px; font-size:12px; color:var(--ink-2)}
+.legend .item{display:flex; align-items:center; gap:6px}
+.legend .ln{width:15px; height:0; border-top:2px solid currentColor}
+.legend .ln.ref{border-top-style:dashed}
+
+.lt-panel{margin-top:16px; padding-top:14px; border-top:1px solid var(--line)}
+.lt-panel .h{font-size:13px; font-weight:600; color:var(--accent-ink); margin-bottom:2px}
+.lt-figures{display:flex; gap:20px; flex-wrap:wrap; font-size:12.5px; margin:8px 0 4px}
+.lt-figures b{font-size:17px; font-weight:500}
+
+/* checklist */
+.picker{padding:16px 18px}
+.chk-groups{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px 20px; margin-bottom:8px}
+.chk-group h4{margin:0 0 6px; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3)}
+.chk{display:flex; align-items:center; gap:8px; font-size:12.5px; padding:3px 0; cursor:pointer}
+.chk input{accent-color:var(--accent); width:14px; height:14px}
+.chk .pv{color:var(--ink-3); font-size:10px}
+.pick-warn{font-size:11.5px; color:var(--rise); margin:4px 0 0}
+
+details.expand{margin-top:12px; font-size:12.5px}
+details.expand summary{cursor:pointer; color:var(--ink-2); padding:5px 0}
+details.expand .body{padding:8px 2px 2px; color:var(--ink-2); line-height:1.75}
+.thr-table{width:100%; border-collapse:collapse; font-size:12px; margin-top:8px}
+.thr-table td{padding:5px 9px; border-bottom:1px solid var(--line)}
+
+table.src{width:100%; border-collapse:collapse; font-size:12.5px}
+table.src th,table.src td{text-align:left; padding:8px 12px; border-bottom:1px solid var(--line)}
+table.src th{font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-3); font-weight:600}
+table.src tbody tr:last-child td{border-bottom:none}
+.badge{font-size:10.5px; font-weight:600; padding:1px 7px; border-radius:999px}
+.badge.real{color:var(--cool); background:rgba(31,109,155,.12)}
+.badge.prov{color:var(--rise); background:rgba(181,70,31,.12)}
+:root:not([data-theme="light"]) .badge.real, :root[data-theme="dark"] .badge.real{background:rgba(99,180,220,.14)}
+:root:not([data-theme="light"]) .badge.prov, :root[data-theme="dark"] .badge.prov{background:rgba(224,113,63,.16)}
+.grouphdr td{font-weight:600; font-size:11px; letter-spacing:.06em; color:var(--ink-3); background:var(--raise); text-transform:uppercase}
+.tbl-scroll{overflow-x:auto}
+
+details.data-table{margin:10px 2px 0; font-size:12px}
+details.data-table summary{cursor:pointer; color:var(--ink-2); padding:4px 0}
+details.data-table table{border-collapse:collapse; margin-top:8px; font-size:11.5px}
+details.data-table td,details.data-table th{padding:4px 8px; white-space:nowrap; border-bottom:1px solid var(--line)}
+
+footer{margin-top:44px; padding-top:20px; border-top:1px solid var(--line); font-size:12.5px; color:var(--ink-3); line-height:1.8}
+footer b{color:var(--ink-2); font-weight:600}
+footer ul{margin:6px 0 0; padding-left:1.1em}
+
+@media (max-width:640px){
+  .wrap{padding:22px 15px 60px}
+  h1{font-size:20px}
+  .gauge-row{gap:12px}
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important; animation:none!important} }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="bar" aria-hidden="true"></div>
+      <div>
+        <h1>部材シグナル</h1>
+        <p class="tagline">相場と公開統計から、材料区分ごとの<b>逼迫度</b>とリードタイム延伸の<b>兆候</b>を一望する。仕入先の値上げ・納期回答が妥当か、購買が交渉前に確認するための道具。</p>
+      </div>
+    </div>
+    <div class="updated">相場・統計データ<br><b id="updated" class="mono"></b><br><span id="newsStamp" class="nstamp"></span></div>
+  </header>
+
+  <section aria-labelledby="sig-h">
+    <p class="eyebrow" id="sig-h">全体サマリー</p>
+    <div class="signal-grid" id="signalGrid"></div>
+    <p class="read" id="signalRead"></p>
+  </section>
+
+  <section aria-labelledby="news-h" id="newsSection" hidden>
+    <p class="eyebrow" id="news-h">市況・ニュース（自動更新）</p>
+    <p class="sub">最新の相場・部材欠品・地政学リスクを1日2回（朝5時／夕方15時 JST）自動で取得・更新。</p>
+    <div class="card news" id="newsCard"></div>
+  </section>
+
+  <section aria-labelledby="hm-h">
+    <p class="eyebrow" id="hm-h">材料区分の逼迫度</p>
+    <p class="sub">価格モメンタム・納期統計・（半導体は業界需給）を 0〜100 に正規化した推計スコア。行をクリックすると内訳を表示。</p>
+    <div class="hm-controls">
+      <span style="font-size:12px;color:var(--ink-3)">並び替え</span>
+      <div class="seg" id="sortSeg" role="group" aria-label="並び替え">
+        <button data-sort="score" aria-pressed="true">逼迫度</button>
+        <button data-sort="lt" aria-pressed="false">リードタイム変化</button>
+        <button data-sort="name" aria-pressed="false">名前</button>
+      </div>
+    </div>
+    <div class="heatmap" id="heatmap"></div>
+  </section>
+
+  <section aria-labelledby="dt-h">
+    <p class="eyebrow" id="dt-h">選択中の区分</p>
+    <div class="card detail" id="detail"></div>
+  </section>
+
+  <section aria-labelledby="pk-h">
+    <p class="eyebrow" id="pk-h">素材を自由に選ぶ</p>
+    <p class="sub">見たい原材料・指標にチェック（最大6件）。時系列を指数化して重ねて表示します。</p>
+    <div class="card picker">
+      <div class="chk-groups" id="chkGroups"></div>
+      <p class="pick-warn" id="pickWarn" hidden>表示は最大6件です。追加するには他のチェックを外してください。</p>
+      <div class="chart-head" style="margin-top:8px">
+        <span class="t" id="pickTitle">選択した素材の推移</span>
+        <div class="controls">
+          <div class="seg" id="pmodeSeg" role="group" aria-label="表示モード">
+            <button data-mode="index" aria-pressed="true">指数(期初=100)</button>
+            <button data-mode="raw" aria-pressed="false">実額</button>
+          </div>
+          <div class="seg" id="prangeSeg" role="group" aria-label="期間">
+            <button data-range="all" aria-pressed="true">全期間</button>
+            <button data-range="5y" aria-pressed="false">5年</button>
+            <button data-range="3y" aria-pressed="false">3年</button>
+            <button data-range="1y" aria-pressed="false">1年</button>
+          </div>
+        </div>
+      </div>
+      <div class="chart-wrap"><div id="pickChart" tabindex="0" role="img" aria-label="選択した素材の時系列チャート"></div></div>
+      <div class="legend" id="pickLegend"></div>
+      <details class="data-table"><summary>データ表を開く</summary><div class="tbl-scroll"><table id="pickTable"></table></div></details>
+    </div>
+  </section>
+
+  <section aria-labelledby="mth-h">
+    <p class="eyebrow" id="mth-h">算出方法と前提</p>
+    <div class="card" style="padding:15px 18px">
+      <p style="margin:0;font-size:13px;line-height:1.75;color:var(--ink)" id="methodText"></p>
+      <details class="expand">
+        <summary>逼迫度レベルのしきい値</summary>
+        <div class="body">
+          <table class="thr-table">
+            <tr><td><span class="chip lv0">緩和</span></td><td class="mono">0 – 25</td><td>相場・納期とも落ち着き。値下げ交渉の余地。</td></tr>
+            <tr><td><span class="chip lv1">通常</span></td><td class="mono">25 – 42</td><td>平常運転。値上げ要求には個別確認を。</td></tr>
+            <tr><td><span class="chip lv2">やや逼迫</span></td><td class="mono">42 – 58</td><td>上昇の初動。代替品・複数社見積りの準備。</td></tr>
+            <tr><td><span class="chip lv3">逼迫</span></td><td class="mono">58 – 74</td><td>値上げ・納期延伸の妥当性が高い。前倒し発注を検討。</td></tr>
+            <tr><td><span class="chip lv4">深刻</span></td><td class="mono">74 – 100</td><td>過去の危機局面に匹敵。在庫確保・設計変更まで視野に。</td></tr>
+          </table>
+          <p style="margin-top:10px">直接のリードタイムデータは各社バラバラで統一取得は非現実的なため、<b>相場のモメンタムとサプライチェーン統計から逼迫の“兆候”を推計</b>している。数値そのものより、レベルの変化と方向感を見る道具。</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section aria-labelledby="src-h">
+    <p class="eyebrow" id="src-h">データソース</p>
+    <div class="card tbl-scroll">
+      <table class="src"><thead><tr><th>指標</th><th>ソース</th><th>区分</th></tr></thead><tbody id="srcBody"></tbody></table>
+    </div>
+  </section>
+
+  <footer>
+    <b>このページについて</b> — 購買・資材管理担当者が「値上げ・納期回答が相場で裏付けられるか」を判断するMVP。公開されている相場・市況・サプライチェーン統計のみを使用し、各社の生産管理システムとは連携しない。
+    <br>銅・アルミ・すず等の相場、鉄鋼/樹脂/基板/半導体のPPI、NY連銀の納期・受注拡散指数は<b>実データ</b>。DRAM/NAND契約価格・WSTS売上・SEMI装置出荷額は<b>暫定推計値</b>（実データへの差し替えが必要）。
+    <br><b>自動更新</b>: 相場・統計は月次更新（新しい月が出たら反映）。市況・ニュース・地政学リスクは1日2回（朝5時／夕方15時 JST）にWeb検索で取得し、このページを再生成している。
+    <ul>
+      <li>次: DRAM/NANDを TrendForce 実値に差し替え、区分バスケットの重み・しきい値を実際の値上げ事例で較正</li>
+      <li>次: 区分拡張（電池・磁性材料・光学）、元同僚・購買担当レビュー</li>
+    </ul>
+    <span id="genstamp" class="mono"></span>
+  </footer>
+</div>
+
+<script id="appdata" type="application/json">__DATA__</script>
+<script id="newsdata" type="application/json">__NEWS__</script>
+<script>
+(function(){
+"use strict";
+var DATA = JSON.parse(document.getElementById('appdata').textContent);
+var NEWS = null;
+try{ NEWS = JSON.parse(document.getElementById('newsdata').textContent); }catch(e){ NEWS = null; }
+var MAT = DATA.materials, IND = DATA.indicators, CATS = DATA.categories, ANN = DATA.annotations;
+var M = DATA.meta.months, N = M.length;
+var SVGNS = 'http://www.w3.org/2000/svg';
+var PAL = ['var(--s1)','var(--s2)','var(--s3)','var(--s4)','var(--s5)','var(--s6)'];
+
+function series(id){ return MAT[id] || IND[id]; }
+function jp(d){ var a=d.split('-'); return a[0]+'年'+(+a[1])+'月'; }
+function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+function fmtN(v,dec){ return (v==null)?'–':v.toLocaleString('en-US',{minimumFractionDigits:dec||0,maximumFractionDigits:dec||0}); }
+function fmtPct(v){ return (v==null)?'–':((v>=0?'+':'')+v.toFixed(1)+'%'); }
+function fmtPt(v){ return (v>=0?'+':'')+v.toFixed(0)+'pt'; }
+
+var _al = {};
+function aligned(id){
+  if(_al[id]) return _al[id];
+  var s = series(id); var map = {}; s.points.forEach(function(p){ map[p.date]=p.value; });
+  var last=null, out=M.map(function(m){ if(map[m]!=null) last=map[m]; return map[m]!=null?map[m]:last; });
+  _al[id]=out; return out;
+}
+function pctChg(arr,i,back){ var a=arr[i-back], b=arr[i]; if(a==null||b==null||a===0||i-back<0) return null; return (b/a-1)*100; }
+function matMom(id,i){
+  var arr=aligned(id), yoy=pctChg(arr,i,12), q=pctChg(arr,i,3);
+  var qa = q==null?null:(Math.pow(1+q/100,4)-1)*100;
+  if(yoy==null&&qa==null) return null;
+  if(yoy==null) return qa; if(qa==null) return yoy;
+  return 0.6*yoy + 0.4*qa;
+}
+function nMom(x){ return 100/(1+Math.exp(-(x-8)/20)); }
+function leadStress(i){
+  var cur=aligned('deliveryNY')[i], fut=aligned('deliveryFutNY')[i];
+  var blend = 0.7*(cur==null?0:cur) + 0.3*(fut==null?0:fut);
+  return clamp(45 + blend*1.5, 0, 100);
+}
+function sectorMom(i){
+  var v=[matMom('wsts',i), matMom('semiBill',i)].filter(function(x){return x!=null;});
+  if(!v.length) return null;
+  return nMom(v.reduce(function(a,b){return a+b;},0)/v.length);
+}
+function basketMom(cat,i){
+  var sum=0,w=0;
+  cat.basket.forEach(function(p){ var m=matMom(p[0],i); if(m!=null){ sum+=m*p[1]; w+=p[1]; } });
+  return w? sum/w : null;
+}
+function catScore(cat,i){
+  var pm=basketMom(cat,i), pmN=(pm==null)?50:nMom(pm);
+  var ls=leadStress(i);
+  if(cat.sector==='semi'){
+    var sm=sectorMom(i); if(sm==null) sm=pmN;
+    return 0.42*pmN + 0.30*ls + 0.28*sm;
+  }
+  return 0.58*pmN + 0.42*ls;
+}
+function catLead(cat,i){
+  var pm=basketMom(cat,i), pmN=(pm==null)?50:nMom(pm);
+  return 0.55*leadStress(i) + 0.45*pmN;
+}
+var LEVELS=[{k:'lv0',t:'緩和',i:0},{k:'lv1',t:'通常',i:1},{k:'lv2',t:'やや逼迫',i:2},{k:'lv3',t:'逼迫',i:3},{k:'lv4',t:'深刻',i:4}];
+function level(s){ return s<25?LEVELS[0] : s<42?LEVELS[1] : s<58?LEVELS[2] : s<74?LEVELS[3] : LEVELS[4]; }
+function scoreHistory(cat){
+  var out=[]; for(var i=12;i<N;i++) out.push(catScore(cat,i));
+  return out;
+}
+function basketYoY(cat){
+  var sum=0,w=0;
+  cat.basket.forEach(function(p){ var y=pctChg(aligned(p[0]),N-1,12); if(y!=null){ sum+=y*p[1]; w+=p[1]; } });
+  return w? sum/w : null;
+}
+
+/* ---------- state ---------- */
+var state={ cat:CATS[0].id, sort:'score', picks:['copper','gold','resin','dram'], pmode:'index', prange:'all' };
+try{
+  var sv=JSON.parse(localStorage.getItem('buzai2')||'{}');
+  if(sv.cat && CATS.some(function(c){return c.id===sv.cat;})) state.cat=sv.cat;
+  if(['score','lt','name'].indexOf(sv.sort)>=0) state.sort=sv.sort;
+  if(Array.isArray(sv.picks)) state.picks=sv.picks.filter(function(id){return MAT[id]||IND[id];}).slice(0,6);
+  if(sv.pmode==='raw'||sv.pmode==='index') state.pmode=sv.pmode;
+  if(['all','5y','3y','1y'].indexOf(sv.prange)>=0) state.prange=sv.prange;
+}catch(e){}
+function persist(){ try{ localStorage.setItem('buzai2', JSON.stringify(state)); }catch(e){} }
+
+/* ---------- svg helpers ---------- */
+function el(tag,attrs,text){ var e=document.createElementNS(SVGNS,tag); for(var k in attrs) e.setAttribute(k,attrs[k]); if(text!=null) e.textContent=text; return e; }
+function niceScale(min,max,ticks){
+  ticks=ticks||5; var span=(max-min)||1, s0=span/ticks;
+  var mag=Math.pow(10,Math.floor(Math.log10(s0))), norm=s0/mag;
+  var step=(norm>5?10:norm>2?5:norm>1?2:1)*mag;
+  var nmin=Math.floor(min/step)*step, nmax=Math.ceil(max/step)*step, out=[];
+  for(var v=nmin;v<=nmax+step*1e-6;v+=step) out.push(+v.toFixed(6));
+  return {min:nmin,max:nmax,ticks:out};
+}
+function sparkline(vals,color,w,h){
+  w=w||60; h=h||24; var mn=Math.min.apply(null,vals), mx=Math.max.apply(null,vals);
+  var svg=el('svg',{viewBox:'0 0 '+w+' '+h, width:w, height:h, class:'hm-spark', 'aria-hidden':'true'});
+  var d=''; vals.forEach(function(v,i){
+    var x=w*i/(vals.length-1), y=h-2-(h-4)*((v-mn)/((mx-mn)||1));
+    d+=(i?' L ':'M ')+x.toFixed(1)+' '+y.toFixed(1);
+  });
+  svg.appendChild(el('path',{d:d, fill:'none', stroke:color, 'stroke-width':1.5, 'stroke-linejoin':'round'}));
+  var lx=w, ly=h-2-(h-4)*((vals[vals.length-1]-mn)/((mx-mn)||1));
+  svg.appendChild(el('circle',{cx:lx,cy:ly,r:2,fill:color}));
+  return svg;
+}
+
+/* ---------- generic line chart ---------- */
+function makeChart(host, cfg){
+  // cfg: {ids, mode:'index'|'raw', range:'all'|..., bands:bool, height, kind:'line'|'diff'}
+  var mode=cfg.mode||'index', kind=cfg.kind||'line';
+  var months = cfg.range==='all'||!cfg.range ? M.slice() : M.slice(Math.max(0, N - ({'5y':60,'3y':36,'1y':12}[cfg.range]||N)));
+  var offset = N - months.length;
+  var W=960, H=cfg.height||340, m={t:16,r:76,b:28,l:56};
+  var pw=W-m.l-m.r, ph=H-m.t-m.b, n=months.length;
+  function xs(i){ return m.l + (n<=1?pw/2:pw*i/(n-1)); }
+
+  var ser = cfg.ids.map(function(id,idx){
+    var a=aligned(id);
+    var raw=months.map(function(_,i){ return a[offset+i]; });
+    var base=raw.find(function(x){return x!=null;});
+    var data = (kind==='diff'||mode==='raw') ? raw.slice() : raw.map(function(x){ return x==null?null:x/base*100; });
+    return {id:id, label:series(id).label, color:cfg.colors?cfg.colors[idx]:PAL[idx%PAL.length],
+            ref:(cfg.refIds&&cfg.refIds.indexOf(id)>=0), raw:raw, data:data, short:shortLabel(id)};
+  });
+
+  var vmin=Infinity,vmax=-Infinity;
+  ser.forEach(function(s){ s.data.forEach(function(v){ if(v!=null){ if(v<vmin)vmin=v; if(v>vmax)vmax=v; } }); });
+  if(kind==='diff'){ vmin=Math.min(vmin,0); vmax=Math.max(vmax,0); }
+  var pad=(vmax-vmin)*0.10||1, sc=niceScale(vmin-pad, vmax+pad, 5);
+  function ys(v){ return m.t + ph*(1-(v-sc.min)/(sc.max-sc.min)); }
+
+  var svg=el('svg',{viewBox:'0 0 '+W+' '+H, class:'chart', preserveAspectRatio:'xMidYMid meet', role:'img'});
+
+  if(cfg.bands){
+    var idxOf={}; M.forEach(function(mm,i){ idxOf[mm]=i; });
+    ANN.forEach(function(a,ai){
+      var s0=idxOf[a.start], s1=idxOf[a.end];
+      if(s1<offset || s0>offset+n-1) return;
+      var x0=xs(Math.max(0,s0-offset)), x1=xs(Math.min(n-1,s1-offset));
+      svg.appendChild(el('rect',{class:'band', x:x0, y:m.t, width:Math.max(1,x1-x0), height:ph}));
+      svg.appendChild(el('line',{class:'band-edge', x1:x0, y1:m.t, x2:x0, y2:m.t+ph}));
+      if(x1-x0>6) svg.appendChild(el('text',{class:'band-num', x:x0+4, y:m.t+11}, '❶❷❸❹'[ai]||(ai+1)));
+    });
+  }
+  sc.ticks.forEach(function(t){
+    var y=ys(t);
+    svg.appendChild(el('line',{class:(kind==='diff'&&t===0)?'zero':'grid', x1:m.l, y1:y, x2:W-m.r, y2:y}));
+    svg.appendChild(el('text',{x:m.l-8, y:y+3.5, 'text-anchor':'end', 'font-size':10.5},
+      (mode==='index'&&kind!=='diff')? fmtN(t,0) : fmtN(t, Math.abs(t)<200?1:0)));
+  });
+  var lastYr=null;
+  months.forEach(function(mo,i){
+    var pr=mo.split('-'), yr=pr[0], mn=+pr[1], show=false, lab='';
+    if(cfg.range==='1y'){ if(i%2===0){ show=true; lab=mn+'月'; } }
+    else if(yr!==lastYr && mn<=1){ show=true; lab=yr; }
+    if(mn===1) lastYr=yr;
+    if(show){ var x=xs(i);
+      svg.appendChild(el('line',{class:'grid', x1:x, y1:m.t+ph, x2:x, y2:m.t+ph+4}));
+      svg.appendChild(el('text',{x:x, y:m.t+ph+16, 'text-anchor':'middle', 'font-size':10.5}, lab));
+    }
+  });
+  svg.appendChild(el('line',{class:'axis-line', x1:m.l, y1:m.t+ph, x2:W-m.r, y2:m.t+ph}));
+
+  ser.forEach(function(s){
+    var d='', pen=false;
+    s.data.forEach(function(v,i){ if(v==null){ pen=false; return; }
+      d+=(pen?' L ':' M ')+xs(i).toFixed(1)+' '+ys(v).toFixed(1); pen=true; });
+    svg.appendChild(el('path',{class:'serie'+(s.ref?' ref':''), d:d, stroke:s.color}));
+  });
+  var labels=[];
+  ser.forEach(function(s){ for(var i=s.data.length-1;i>=0;i--){ if(s.data[i]!=null){
+    labels.push({y:ys(s.data[i]), x:xs(i), color:s.color, text:s.short}); break; } } });
+  labels.sort(function(a,b){return a.y-b.y;});
+  for(var li=1;li<labels.length;li++){ if(labels[li].y-labels[li-1].y<12) labels[li].y=labels[li-1].y+12; }
+  labels.forEach(function(L){
+    svg.appendChild(el('circle',{class:'dot', cx:L.x, cy:L.y, r:3, fill:L.color}));
+    svg.appendChild(el('text',{class:'end-label', x:L.x+7, y:L.y+3.5, style:'fill:'+L.color, 'font-size':11}, L.text));
+  });
+  var cross=el('line',{class:'cross', x1:0, y1:m.t, x2:0, y2:m.t+ph, opacity:0});
+  svg.appendChild(cross);
+  var hit=el('rect',{x:m.l, y:m.t, width:pw, height:ph, fill:'transparent', style:'cursor:crosshair'});
+  svg.appendChild(hit);
+
+  host.innerHTML='';
+  var wrap=document.createElement('div'); wrap.style.position='relative';
+  wrap.appendChild(svg);
+  var tt=document.createElement('div'); tt.className='tt'; wrap.appendChild(tt);
+  host.appendChild(wrap);
+
+  var ctx={svg:svg, months:months, ser:ser, xs:xs, N:n, W:W, m:m, cross:cross, mode:mode, kind:kind};
+  function locate(clientX){
+    var box=svg.getBoundingClientRect(), ratio=W/box.width, lx=(clientX-box.left)*ratio;
+    return clamp(Math.round((lx-m.l)/(pw||1)*(n-1)), 0, n-1);
+  }
+  function show(clientX){
+    var i=locate(clientX), x=xs(i);
+    cross.setAttribute('x1',x); cross.setAttribute('x2',x); cross.setAttribute('opacity',1);
+    var rows=ser.map(function(s){
+      if(s.data[i]==null) return '';
+      var rv=s.raw[i], txt=(mode==='index'&&kind!=='diff')? (Math.round(s.data[i])+'  ('+fmtN(rv, Math.abs(rv)<200?1:0)+')') : fmtN(rv, Math.abs(rv)<200?1:0);
+      return '<div class="tt-r"><span><i class="sw" style="background:'+s.color+'"></i>'+s.short+'</span><b class="mono">'+txt+'</b></div>';
+    }).join('');
+    tt.innerHTML='<div class="tt-d">'+jp(months[i])+'</div>'+rows;
+    tt.style.opacity=1;
+    var box=svg.getBoundingClientRect(), px=(x/W)*box.width, tw=tt.offsetWidth;
+    tt.style.left=Math.min(box.width-tw-4, Math.max(4, px+12))+'px';
+    tt.style.top='10px';
+  }
+  function hide(){ tt.style.opacity=0; cross.setAttribute('opacity',0); }
+  hit.addEventListener('pointermove', function(e){ show(e.clientX); });
+  hit.addEventListener('pointerdown', function(e){ show(e.clientX); });
+  hit.addEventListener('pointerleave', hide);
+  host._show=show;
+  return ser;
+}
+function shortLabel(id){
+  var map={copper:'銅',aluminum:'アルミ',nickel:'Ni',tin:'すず',zinc:'亜鉛',lead:'鉛',gold:'金',silver:'銀',
+    ironore:'鉄鉱石',steel:'鋼材',crude:'原油',natgas:'ガス',resin:'樹脂',resinmfg:'樹脂製造',pcb:'基板',
+    eleccomp:'電子部品',semippi:'半導体',metals:'金属PPI',dram:'DRAM',nand:'NAND',
+    deliveryNY:'納期(現況)',deliveryFutNY:'納期(先行)',ordersNY:'受注DI',durables:'耐久財',wsts:'半導体売上',semiBill:'装置出荷'};
+  return map[id]||id;
+}
+var CATNAME={}; CATS.forEach(function(c){ CATNAME[c.id]=c.name; });
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];}); }
+function catHasNews(id){ return NEWS && NEWS.headlines && NEWS.headlines.some(function(h){ return (h.cats||[]).indexOf(id)>=0 && h.severity==='high'; }); }
+function catNote(id){ return NEWS && NEWS.categoryNotes ? NEWS.categoryNotes[id] : null; }
+
+/* ---------- render: news ---------- */
+function renderNews(){
+  if(!NEWS || !NEWS.headlines){ return; }
+  document.getElementById('newsSection').hidden=false;
+  if(NEWS.updatedLabel) document.getElementById('newsStamp').textContent='市況更新: '+NEWS.updatedLabel;
+  var spot=(NEWS.spot||[]).map(function(s){
+    var down=/[-−▼]|下落|安/.test(s.chg||'');
+    return '<div class="spot"><div class="sl">'+esc(s.label)+'</div><div class="sv mono">'+esc(s.level||'')+'</div>'
+      +'<div class="sc mono" style="color:'+(down?'var(--cool)':'var(--rise)')+'">'+esc(s.chg||'')+'</div>'
+      +(s.note?'<div class="sn">'+esc(s.note)+'</div>':'')+'</div>';
+  }).join('');
+  var hl=(NEWS.headlines||[]).map(function(h){
+    var sev = h.severity==='high'?'sev-high':h.severity==='low'?'sev-low':'sev-med';
+    var cats=(h.cats||[]).filter(function(id){return CATNAME[id];}).map(function(id){ return '<span data-cat="'+id+'">'+esc(CATNAME[id])+'</span>'; }).join('');
+    return '<li class="hl '+sev+'"><div class="thm">'+esc(h.theme||'')+'</div><div>'
+      +'<div class="htitle">'+esc(h.title||'')+'</div>'
+      +(h.detail?'<div class="hdet">'+esc(h.detail)+'</div>':'')
+      +(cats?'<div class="hcats">'+cats+'</div>':'')
+      +'<div class="hmeta">'+esc([h.date,h.source].filter(Boolean).join(' ・ '))+'</div></div></li>';
+  }).join('');
+  var geo=(NEWS.geopolitics||[]).map(function(g){
+    return '<li><b style="color:var(--ink)">'+esc(g.title||'')+'</b>'+(g.detail?' — '+esc(g.detail):'')+'</li>';
+  }).join('');
+  document.getElementById('newsCard').innerHTML =
+    '<div class="nhead"><span style="font-size:13px;font-weight:600;color:var(--ink-2)">今日の要点</span>'
+      +'<span class="nstamp">'+esc(NEWS.updatedLabel||'')+'</span></div>'
+    +(NEWS.summary?'<p class="nsum">'+esc(NEWS.summary)+'</p>':'')
+    +(spot?'<div class="spotrow">'+spot+'</div>':'')
+    +(hl?'<ul class="hlines">'+hl+'</ul>':'')
+    +(geo?'<div class="geo"><h4>地政学・政策</h4><ul style="margin:0;padding-left:1.1em">'+geo+'</ul></div>':'');
+  [].forEach.call(document.querySelectorAll('#newsCard .hcats span'), function(sp){
+    sp.addEventListener('click', function(){
+      var id=this.dataset.cat;
+      if(CATS.some(function(x){return x.id===id;})){ state.cat=id; persist(); renderHeatmap(); renderDetail();
+        document.getElementById('detail').scrollIntoView({behavior:'smooth',block:'start'}); }
+    });
+  });
+}
+
+/* ---------- render: summary ---------- */
+function renderSummary(){
+  var dNow=aligned('deliveryNY')[N-1], d3=aligned('deliveryNY')[N-4];
+  var scored=CATS.map(function(c){ return {c:c, s:catScore(c,N-1)}; }).sort(function(a,b){return b.s-a.s;});
+  var tight=scored.filter(function(x){return x.s>=58;}).length;
+  var top=scored[0];
+  var g=document.getElementById('signalGrid'); g.innerHTML='';
+  function tile(k, vhtml, chip){
+    var t=document.createElement('div'); t.className='tile';
+    t.innerHTML='<div class="k">'+k+'</div><div class="v mono">'+vhtml+'</div>'+(chip||'');
+    g.appendChild(t);
+  }
+  var dTrend = dNow>d3 ? '悪化' : (dNow<d3? '改善':'横ばい');
+  tile('納期長期化 拡散指数（NY連銀）', dNow.toFixed(1)+' <small>DI・'+dTrend+'</small>',
+    '<span class="chip '+(dNow>10?'lv3':dNow>0?'lv2':'lv1')+'">'+(dNow>0?'納期は長期化方向':'ほぼ正常')+'</span>');
+  tile('逼迫・深刻の区分', tight+' <small>/ '+CATS.length+' 区分</small>',
+    '<span class="chip '+(tight>=4?'lv3':tight>=1?'lv2':'lv1')+'">'+(tight>=4?'広範に逼迫':tight>=1?'一部で逼迫':'落ち着き')+'</span>');
+  var lv=level(top.s);
+  tile('最も逼迫している区分', top.c.name.length>9?top.c.name.slice(0,9)+'…':top.c.name,
+    '<span class="chip '+lv.k+'">'+lv.t+' ・ '+Math.round(top.s)+'</span>');
+  document.getElementById('signalRead').innerHTML =
+    'NY連銀の納期指数は <span class="num">'+dNow.toFixed(1)+'</span>（0超＝多数の企業が仕入先の納期長期化を報告）。'
+    +CATS.length+'区分のうち <span class="num">'+tight+'</span>区分がスコア58以上（逼迫〜深刻）。'
+    +'最も高いのは「'+top.c.name+'」（'+Math.round(top.s)+'／'+level(top.s).t+'）。'
+    +'値上げ・納期回答が来たら、まず対象部材の区分をこの表で確認する。';
+}
+
+/* ---------- render: heatmap ---------- */
+function renderHeatmap(){
+  var rows=CATS.map(function(c){
+    var s=catScore(c,N-1), lt=catLead(c,N-1), lt3=catLead(c,N-4);
+    return {c:c, s:s, lt:lt, dlt:lt-lt3, yoy:basketYoY(c), hist:scoreHistory(c)};
+  });
+  if(state.sort==='score') rows.sort(function(a,b){return b.s-a.s;});
+  else if(state.sort==='lt') rows.sort(function(a,b){return b.dlt-a.dlt;});
+  else rows.sort(function(a,b){return a.c.name.localeCompare(b.c.name,'ja');});
+
+  var box=document.getElementById('heatmap'); box.innerHTML='';
+  rows.forEach(function(r){
+    var lv=level(r.s);
+    var btn=document.createElement('button');
+    btn.className='hm-row'; btn.type='button';
+    btn.setAttribute('aria-current', r.c.id===state.cat);
+    var dcls = r.dlt>2?'up':r.dlt<-2?'down':'flat';
+    btn.innerHTML =
+      '<div><div class="nm">'+r.c.name+(catHasNews(r.c.id)?'<span class="hm-flag">重要ニュース</span>':'')+'</div><div class="ds">'+r.c.desc+'</div><div class="conf">データ信頼度: '+r.c.confidence+'</div></div>'
+      +'<div><span class="chip '+lv.k+'">'+lv.t+'</span></div>'
+      +'<div class="scorebar"><span class="mk" style="left:'+clamp(r.s,0,100)+'%"></span><span class="sc mono">'+Math.round(r.s)+'</span></div>'
+      +'<div class="hm-spark-cell"></div>'
+      +'<div class="hm-num mono">'+fmtPct(r.yoy)+'<span class="dl">YoY</span></div>'
+      +'<div class="hm-num mono delta '+dcls+'">'+fmtPt(r.dlt)+'<span class="dl">推定LT Δ3m</span></div>';
+    var col=getComputedStyle(document.documentElement).getPropertyValue('--'+lv.k).trim()||'#888';
+    btn.querySelector('.hm-spark-cell').appendChild(sparkline(r.hist, col, 66, 26));
+    btn.addEventListener('click', function(){ state.cat=r.c.id; persist(); renderHeatmap(); renderDetail();
+      document.getElementById('detail').scrollIntoView({behavior:'smooth', block:'start'}); });
+    box.appendChild(btn);
+  });
+}
+
+/* ---------- render: detail ---------- */
+function renderDetail(){
+  var cat=CATS.find(function(c){return c.id===state.cat;});
+  var s=catScore(cat,N-1), lv=level(s);
+  var lt=catLead(cat,N-1), dlt=lt-catLead(cat,N-4);
+  var host=document.getElementById('detail');
+
+  // driver = basket material with highest current momentum
+  var drivers=cat.basket.map(function(p){ return {id:p[0], w:p[1], m:matMom(p[0],N-1), y:pctChg(aligned(p[0]),N-1,12)}; })
+    .sort(function(a,b){return (b.m||-999)-(a.m||-999);});
+  var top=drivers[0];
+  var lsNow=leadStress(N-1);
+  var driverTxt = top && top.m!=null
+    ? '主因は<b>'+series(top.id).label+'</b>（前年比 '+fmtPct(top.y)+'）。'
+    : '構成材料の相場は落ち着いている。';
+  var ltTxt = lsNow>65 ? 'サプライチェーンの納期指標も強い逼迫を示す。'
+    : lsNow>50 ? '納期指標はやや逼迫方向。'
+    : '納期指標は落ち着いている。';
+
+  host.innerHTML =
+    '<h3>'+cat.name+' <span class="chip '+lv.k+'" style="vertical-align:middle;margin-left:6px">'+lv.t+'</span></h3>'
+    +'<div class="dmeta">'+cat.desc+' ／ 例: '+cat.examples+' ／ データ信頼度: '+cat.confidence+'</div>'
+    +(catNote(cat.id)?'<div class="catnote"><b>本日のメモ</b> '+esc(catNote(cat.id))+'</div>':'')
+    +'<div class="gauge-row">'
+      +'<div class="gauge-big"><div class="n">'+Math.round(s)+'<small> /100</small></div><div style="font-size:11px;color:var(--ink-3)">逼迫度スコア</div></div>'
+      +'<div class="gauge"><div class="track"><span class="mk" style="left:calc('+clamp(s,0,100)+'% - 2px)"></span></div>'
+        +'<div class="scale"><span>0 緩和</span><span>50</span><span>100 深刻</span></div></div>'
+    +'</div>'
+    +'<p class="dread">'+driverTxt+' '+ltTxt+' '
+      +'推定リードタイム逼迫度は <b class="mono">'+Math.round(lt)+'</b>（3ヶ月前比 <span class="mono delta '+(dlt>2?'up':dlt<-2?'down':'flat')+'">'+fmtPt(dlt)+'</span>）。</p>'
+    +'<ul class="basket" id="basketList"></ul>'
+    +'<div class="chart-head" style="margin-top:16px"><span class="t">構成材料の推移（指数・期初=100）</span></div>'
+    +'<div class="chart-wrap"><div id="catChart" role="img" aria-label="'+cat.name+'の構成材料の推移"></div></div>'
+    +'<div class="legend" id="catLegend"></div>'
+    +'<div class="lt-panel"><div class="h">サプライチェーン・納期</div>'
+      +'<div style="font-size:12px;color:var(--ink-3)">NY連銀 製造業調査の「仕入先の納期」拡散指数。0超＝長期化。</div>'
+      +'<div class="lt-figures"><span>現況 <b class="mono">'+aligned("deliveryNY")[N-1].toFixed(1)+'</b></span>'
+        +'<span>6ヶ月先 <b class="mono">'+aligned("deliveryFutNY")[N-1].toFixed(1)+'</b></span>'
+        +'<span>新規受注DI <b class="mono">'+aligned("ordersNY")[N-1].toFixed(1)+'</b></span></div>'
+      +'<div class="chart-wrap"><div id="ltChart" role="img" aria-label="納期拡散指数の推移"></div></div></div>'
+    +'<p class="dread" style="border-top:1px solid var(--line);padding-top:12px;margin-top:14px">'+cat.commentary()+'</p>';
+
+  // basket list
+  var bl=host.querySelector('#basketList');
+  cat.basket.forEach(function(p){
+    var y=pctChg(aligned(p[0]),N-1,12);
+    var li=document.createElement('li');
+    li.innerHTML='<span>'+series(p[0]).label+'</span><span class="w">重み'+Math.round(p[1]*100)+'%</span>'
+      +'<span class="y mono" style="color:'+(y>0?'var(--rise)':'var(--cool)')+'">'+fmtPct(y)+'</span>';
+    bl.appendChild(li);
+  });
+
+  var ids=cat.basket.map(function(p){return p[0];});
+  var refIds=ids.filter(function(id){ return series(id).provisional; });
+  makeChart(host.querySelector('#catChart'), {ids:ids, mode:'index', range:'all', bands:true, refIds:refIds, height:300});
+  renderLegendInto(host.querySelector('#catLegend'), ids, PAL, refIds);
+  makeChart(host.querySelector('#ltChart'), {ids:['deliveryNY','deliveryFutNY'], kind:'diff', range:'5y',
+    colors:['var(--s2)','var(--s1)'], height:180});
+}
+// attach commentary generator per category
+CATS.forEach(function(c){
+  c.commentary = function(){
+    var s=catScore(c,N-1), lv=level(s), y=basketYoY(c);
+    var base = c.sector==='semi'
+      ? 'この区分は半導体・電子部品の業界需給にも連動する。'
+      : 'この区分は上流の金属・化学相場に連動する。';
+    var act = lv.i>=3 ? '値上げ・納期延伸の要求には相場の裏付けがある可能性が高い。前倒し発注・複数社見積り・在庫水準の見直しを検討。'
+      : lv.i===2 ? '上昇の初動局面。代替品の事前評価と、次回発注ロットの前倒しを準備しておくと良い。'
+      : '相場・納期とも落ち着いており、値上げ要求には個別の根拠確認を求められる状況。';
+    return base+' 直近のバスケット価格は前年比 '+fmtPct(y)+'。'+act;
+  };
+});
+
+function renderLegendInto(box, ids, colors, refIds){
+  box.innerHTML = ids.map(function(id,i){
+    var ref = refIds && refIds.indexOf(id)>=0;
+    return '<span class="item" style="color:'+(colors[i%colors.length])+'"><span class="ln'+(ref?' ref':'')+'"></span>'
+      +'<span style="color:var(--ink-2)">'+series(id).label+(ref?'（暫定推計）':'')+'</span></span>';
+  }).join('');
+}
+
+/* ---------- render: picker ---------- */
+function renderPicker(){
+  var groups={};
+  DATA.meta.months; // noop
+  Object.keys(MAT).forEach(function(id){ (groups[MAT[id].group]=groups[MAT[id].group]||[]).push(id); });
+  var indGroup = Object.keys(IND);
+  var box=document.getElementById('chkGroups'); box.innerHTML='';
+  var order=DATA.groups.concat(['指標']);
+  order.forEach(function(gname){
+    var ids = gname==='指標' ? indGroup : (groups[gname]||[]);
+    if(!ids.length) return;
+    var g=document.createElement('div'); g.className='chk-group';
+    g.innerHTML='<h4>'+gname+'</h4>';
+    ids.forEach(function(id){
+      var s=series(id);
+      var lab=document.createElement('label'); lab.className='chk';
+      lab.innerHTML='<input type="checkbox" value="'+id+'"'+(state.picks.indexOf(id)>=0?' checked':'')+'>'
+        +'<span>'+s.label+(s.provisional?' <span class="pv">暫定</span>':'')+'</span>';
+      lab.querySelector('input').addEventListener('change', function(){
+        if(this.checked){
+          if(state.picks.length>=6){ this.checked=false; document.getElementById('pickWarn').hidden=false; return; }
+          state.picks.push(id);
+        } else {
+          state.picks=state.picks.filter(function(x){return x!==id;});
+        }
+        document.getElementById('pickWarn').hidden = state.picks.length<6;
+        persist(); renderPickChart();
+      });
+      g.appendChild(lab);
+    });
+    box.appendChild(g);
+  });
+  renderPickChart();
+}
+function renderPickChart(){
+  var host=document.getElementById('pickChart');
+  if(!state.picks.length){ host.innerHTML='<p style="color:var(--ink-3);font-size:13px;padding:20px 4px">素材を1件以上選んでください。</p>';
+    document.getElementById('pickLegend').innerHTML=''; document.getElementById('pickTable').innerHTML=''; return; }
+  var refIds=state.picks.filter(function(id){ return series(id).provisional; });
+  var ser=makeChart(host, {ids:state.picks, mode:state.pmode, range:state.prange, bands:false, refIds:refIds, height:330});
+  renderLegendInto(document.getElementById('pickLegend'), state.picks, PAL, refIds);
+  // data table
+  var months = state.prange==='all' ? M : M.slice(Math.max(0,N-({'5y':60,'3y':36,'1y':12}[state.prange])));
+  var t=document.getElementById('pickTable');
+  t.innerHTML='<thead><tr><th>月</th>'+state.picks.map(function(id){return '<th>'+shortLabel(id)+'</th>';}).join('')+'</tr></thead>'
+    +'<tbody>'+months.map(function(mo){
+      var i=M.indexOf(mo);
+      return '<tr><td class="mono">'+mo+'</td>'+state.picks.map(function(id){
+        var v=aligned(id)[i]; return '<td class="mono">'+fmtN(v, v!=null&&Math.abs(v)<200?1:0)+'</td>';
+      }).join('')+'</tr>';
+    }).join('')+'</tbody>';
+}
+
+/* ---------- render: sources ---------- */
+function renderSources(){
+  var tb=document.getElementById('srcBody'); tb.innerHTML='';
+  function grp(name, ids){
+    var tr=document.createElement('tr'); tr.className='grouphdr';
+    tr.innerHTML='<td colspan="3">'+name+'</td>'; tb.appendChild(tr);
+    ids.forEach(function(id){
+      var s=series(id), r=document.createElement('tr');
+      r.innerHTML='<td>'+s.label+'</td><td><a href="'+s.sourceUrl+'" target="_blank" rel="noopener">'+s.source+'</a></td>'
+        +'<td>'+(s.provisional?'<span class="badge prov">暫定推計</span>':'<span class="badge real">実データ</span>')+'</td>';
+      tb.appendChild(r);
+    });
+  }
+  var byG={}; Object.keys(MAT).forEach(function(id){ (byG[MAT[id].group]=byG[MAT[id].group]||[]).push(id); });
+  DATA.groups.forEach(function(g){ if(byG[g]) grp(g, byG[g]); });
+  grp('サプライチェーン・需給指標', Object.keys(IND));
+}
+
+/* ---------- controls ---------- */
+document.getElementById('sortSeg').addEventListener('click', function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  state.sort=b.dataset.sort; persist();
+  [].forEach.call(this.children,function(x){ x.setAttribute('aria-pressed', x===b); });
+  renderHeatmap();
+});
+function segWire(segId, key, fn){
+  document.getElementById(segId).addEventListener('click', function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    state[key]=b.dataset[key==='pmode'?'mode':'range']; persist();
+    [].forEach.call(this.children,function(x){ x.setAttribute('aria-pressed', x===b); });
+    fn();
+  });
+}
+segWire('pmodeSeg','pmode', renderPickChart);
+segWire('prangeSeg','prange', renderPickChart);
+function syncSegs(){
+  [].forEach.call(document.querySelectorAll('#sortSeg button'),function(x){ x.setAttribute('aria-pressed', x.dataset.sort===state.sort); });
+  [].forEach.call(document.querySelectorAll('#pmodeSeg button'),function(x){ x.setAttribute('aria-pressed', x.dataset.mode===state.pmode); });
+  [].forEach.call(document.querySelectorAll('#prangeSeg button'),function(x){ x.setAttribute('aria-pressed', x.dataset.range===state.prange); });
+}
+document.getElementById('pickChart').addEventListener('keydown', function(e){
+  var h=this; if(!h._show) return;
+  if(e.key==='ArrowLeft'||e.key==='ArrowRight'){ e.preventDefault();
+    h._k=(h._k==null?N-1:h._k)+(e.key==='ArrowRight'?1:-1); h._k=clamp(h._k,0,N-1);
+    var box=h.querySelector('svg').getBoundingClientRect(); h._show(box.left+box.width*(h._k/(N-1)));
+  }
+});
+
+/* ---------- init ---------- */
+document.getElementById('updated').textContent = DATA.meta.rangeEnd.replace('-','年')+'月';
+document.getElementById('genstamp').textContent = '生成: '+DATA.meta.generated+' ／ 素材'+Object.keys(MAT).length+'・区分'+CATS.length+(NEWS&&NEWS.updated?' ／ 市況 '+NEWS.updated.slice(0,16).replace('T',' '):'');
+document.getElementById('methodText').textContent = DATA.method;
+syncSegs();
+renderSummary();
+renderNews();
+renderHeatmap();
+renderDetail();
+renderPicker();
+renderSources();
+})();
+</script>

@@ -1,0 +1,82 @@
+{
+  "updated": "2026-09-10T05:00:00+09:00",
+  "updatedLabel": "2026年9月10日 05:00 JST",
+  "summary": "銅がLME史上最高値、CCL・エポキシ樹脂の欠品でプリント基板系が急伸、メモリはAI向け再配分で40週超のリードタイムが常態化。米中の輸出規制・関税リスクが全区分の上振れ要因。",
+  "spot": [
+    {"key": "copper", "label": "銅 LME 3ヶ月", "level": "約 $14,700/t", "chg": "年初来 +18%", "asof": "9/8", "note": "LME在庫は5月末比 -40%。米の関税前の駆け込みと鉱山減産。" },
+    {"key": "gold", "label": "金", "level": "史上最高値圏", "chg": "上昇継続", "asof": "9/9", "note": "MLCC電極・ボンディングワイヤのコスト押し上げ。" },
+    {"key": "ccl", "label": "銅張積層板(CCL・韓国輸入)", "level": "約 $20,700/t", "chg": "前年比 +74.5%", "asof": "3月", "note": "FR-4 標準品のリードタイムが8週へ。" },
+    {"key": "dram", "label": "DRAM/NAND 契約価格", "level": "指数142%高", "chg": "前年比 +140%超", "asof": "Q3", "note": "NANDは前四半期比 +70〜75%でDRAMを逆転。" }
+  ],
+  "headlines": [
+    {
+      "date": "2026-09-08", "theme": "相場", "severity": "high",
+      "cats": ["conductor", "harness", "substrate", "pcb_assy", "precious"],
+      "title": "銅がLME史上最高値、3ヶ月物が約$14,700/t",
+      "detail": "米国の精錬銅への関税観測で米国向けに在庫が流出、LME在庫は5月末比で約40%減。鉱山生産も2026年前半に減少。年初来で約18%上昇。コネクタ・端子・ハーネス・銅張積層板の値上げ根拠になりうる。",
+      "source": "Bloomberg / SCMP / Business Recorder"
+    },
+    {
+      "date": "2026-09-01", "theme": "欠品・リードタイム", "severity": "high",
+      "cats": ["substrate", "pcb_assy", "resin_thermoset"],
+      "title": "CCL・エポキシ樹脂の欠品が深刻化、プリント基板材料が高騰",
+      "detail": "2026年4月にサウジ・ジュベイルのPPE樹脂プラントが停止し、高機能積層板向け原料の世界供給の約7割が消失、復旧せず。エポキシ樹脂のリードタイムは3週→15週。CCL価格は前年比+70%、FR-4標準品も8週に。",
+      "source": "AtlasPCB / Aetrix / Daeduck 幹部コメント"
+    },
+    {
+      "date": "2026-08-25", "theme": "欠品・リードタイム", "severity": "high",
+      "cats": ["memory"],
+      "title": "DRAM/NANDは40週超のリードタイムが定着、2027年まで解消せず",
+      "detail": "DDR4/DDR5のリードタイムが40週超。大手の受注残は2027年まで。SK HynixはHBM・DRAM・NANDの2026年分が完売。ウェハ能力のHBM・先端DRAMへの構造的な再配分で、汎用・旧世代品ほど割り当てが絞られる。",
+      "source": "Findchips / A2 Global / NAND Research"
+    },
+    {
+      "date": "2026-08-20", "theme": "欠品・リードタイム", "severity": "med",
+      "cats": ["passive"],
+      "title": "MLCCのリードタイムが26〜40週へ、Murata等が値上げ",
+      "detail": "AIサーバ・EV・再エネが従来の民生用MLCC能力を奪い合う。次世代GPUサーバ1ラックでMLCC 4〜6万個を消費。Murata・Samsung電機・太陽誘電・YAGEO・Walsinが値上げ。高容量・車載・小型サイズが最も逼迫。",
+      "source": "Astute / Fusion WW / NextPCB"
+    },
+    {
+      "date": "2026-08-15", "theme": "欠品・リードタイム", "severity": "med",
+      "cats": ["logic"],
+      "title": "MCU 30〜55週、電源IC(PMIC)は50週超",
+      "detail": "AIデータセンター建設が電源IC・レギュレータ・HBMを吸収。上位ファウンドリの8インチ成熟ノード稼働率は約90%。LDO・電圧監視ICのリードタイムが35〜50週。8ビットMCUと一部の代替可能品は比較的安定。",
+      "source": "Utmel / GlobX / Cosolvic"
+    },
+    {
+      "date": "2026-08-05", "theme": "相場", "severity": "med",
+      "cats": ["memory", "logic", "passive", "substrate"],
+      "title": "電子部品コモディティ価格指数、前年比+140%超で高止まり",
+      "detail": "Supplyframe Commodity IQ 指数は 2025Q2→2026Q2 で+146.3%。Q3も前年比140%超の水準が続く見通し。",
+      "source": "Supplyframe / Storage Switzerland"
+    }
+  ],
+  "geopolitics": [
+    {
+      "title": "米、半導体輸出規制を海外子会社まで拡大（9/29）／中国は希土類・磁石の許認可で対抗",
+      "detail": "中国の希土類輸出規制は2026年11月10日まで1年間停止で合意済みだが、いつでも再発動されうる。エレクトロニクス・半導体・自動車・防衛の部品の越境で新たな許認可・遅延リスク。",
+      "cats": ["precious", "passive", "logic", "memory"],
+      "severity": "med",
+      "source": "Mayer Brown / CSIS / IEA"
+    },
+    {
+      "title": "米、中国輸入品に追加100%関税を予告（11月1日発効の可能性）",
+      "detail": "発効すれば中国製の樹脂・受動部品・完成品の調達コストが直撃。銅も米国向けの関税観測で相場が動いている。",
+      "cats": ["resin_gp", "passive", "conductor"],
+      "severity": "med",
+      "source": "各種報道"
+    }
+  ],
+  "categoryNotes": {
+    "conductor": "銅がLME最高値。関税前の駆け込みと鉱山減産が主因で、当面は下がりにくい。コネクタ・端子の値上げ要求は相場の裏付けあり。",
+    "harness": "銅高がそのまま効く。被覆材(PVC)側は落ち着き。電線の値上げ交渉は銅建値スライド条項の確認を。",
+    "substrate": "最も注意すべき区分。エポキシ樹脂3週→15週、CCL +70%超。PPE樹脂プラント停止の影響が長引く。基板の再設計・材料指定の見直しも視野に。",
+    "pcb_assy": "CCL・銅箔・ガラスクロスが同時逼迫。基板メーカーからの値上げ・納期延長は妥当性が高い。前倒し発注を。",
+    "resin_thermoset": "封止材・注型材のエポキシが逼迫。半導体封止材の代替評価を前倒しで。",
+    "memory": "40週超が常態。2027年分の枠取りを今から。汎用DDR4ほど入手難、設計での世代移行も検討。",
+    "passive": "MLCCの高容量・車載・小型が逼迫。BOMの1005/0603サイズ、高容量品を洗い出して複数社・前倒し手配。",
+    "logic": "PMIC・LDOが50週前後。AI関連で成熟ノードが奪われている。代替品リスト(Infineon/NXP等)の事前評価を。",
+    "precious": "金が最高値圏。MLCC電極・ボンディングワイヤのコスト増。希土類の地政学リスクも磁性材料経由で波及注意。"
+  }
+}
