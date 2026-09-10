@@ -1,13 +1,16 @@
 # 自動更新 routine プロンプト
 
-`buzai-signal` リポジトリの `news.json` を最新の市況で更新し、サイトを再生成して push する
-クラウドエージェント。1日2回（朝5時／夕方15時 JST = 20:00 / 06:00 UTC）。
+`buzai-signal` リポジトリの `news.json` を最新の市況で更新し、`fetch.py` で相場データも
+最新化し、サイトを再生成して push するクラウドエージェント。1日1回（朝6時 JST = 21:00 UTC）。
+FRED/IMF の相場は月次公表なので、新しい月が出た朝に data.json の数値が動く。それ以外の日は
+news.json（市況・欠品・地政学）と金銀先物が主な差分。
 
-- cron: `0 20,6 * * *`
-- repo: このリポジトリ（clone 済み）
+- cron: `4 21 * * *`（21:04 UTC = 06:04 JST。毎日）
+- routine 名: 調達アラート 日次更新
+- repo: https://github.com/taichambre/buzai-signal（clone 済み）
 - model: claude-sonnet-5
 - allowed_tools: Bash, Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
-- MCP: なし（メール通知は使わない。サイト更新のみ）
+- MCP: なし（メール通知はしない。サイト更新のみ）
 
 ---
 
@@ -19,9 +22,12 @@
 
 # ゴール
 最新の相場・部材欠品・リードタイム・地政学リスクを Web で調べ、news.json を最新化し、
-サイトを再生成して git push する。最後に本人へ短いダイジェストをメールする。
+fetch.py で相場データも取得し、サイトを再生成して git push する。メール等の通知はしない。
 
 # 手順
+
+## 0. 最新化
+  git pull --rebase   # ローカル編集や前回実行との競合を避ける
 
 ## 1. 情報収集（WebSearch中心。サブエージェントは使わず順番に。合計12〜18クエリで打ち切る）
 以下を今日の日付でWeb検索する。金融サイトへの WebFetch は失敗しやすいので WebSearch のスニペットで足りる範囲で拾う。
