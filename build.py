@@ -155,8 +155,18 @@ categories = [
    "basket":[["dram",0.55],["nand",0.35],["semippi",0.10]],"sector":"semi","confidence":"低（契約価格は暫定推計）"},
   {"id":"logic","name":"ロジック / MCU / アナログ半導体","desc":"MCU・電源IC・アナログ・FPGA・ドライバ","examples":"MCU, LDO/DC-DC, オペアンプ, ゲートドライバ, FPGA",
    "basket":[["semippi",0.55],["eleccomp",0.45]],"sector":"semi","confidence":"中"},
-  {"id":"passive","name":"受動部品","desc":"MLCC・チップ抵抗・インダクタ・フィルタ","examples":"MLCC, チップ抵抗, パワーインダクタ, フェライトビーズ",
+  {"id":"passive","name":"受動部品（コンデンサ・インダクタ）","desc":"MLCC・電解コン・インダクタ・フィルタ","examples":"MLCC, アルミ電解コン, パワーインダクタ, フェライトビーズ, EMIフィルタ",
    "basket":[["eleccomp",0.45],["silver",0.20],["nickel",0.20],["copper",0.15]],"sector":"semi","confidence":"中"},
+  {"id":"resistor","name":"抵抗器","desc":"チップ抵抗・シャント・可変抵抗","examples":"チップ抵抗, 厚膜/薄膜抵抗, 電流検出シャント, 抵抗ネットワーク, ボリューム",
+   "basket":[["eleccomp",0.50],["silver",0.20],["nickel",0.18],["copper",0.12]],"sector":"semi","confidence":"中"},
+  {"id":"diode_sig","name":"ダイオード（小信号・ツェナー）","desc":"整流・定電圧・保護用の個別ダイオード","examples":"ツェナーダイオード, ショットキー, スイッチングダイオード, TVS/ESD, ブリッジダイオード",
+   "basket":[["semippi",0.60],["eleccomp",0.30],["copper",0.10]],"sector":"semi","confidence":"中"},
+  {"id":"transistor","name":"トランジスタ・MOSFET","desc":"小信号・スイッチング・電源用の個別トランジスタ","examples":"小信号トランジスタ, デジタルトランジスタ, MOSFET, IGBT",
+   "basket":[["semippi",0.58],["eleccomp",0.30],["copper",0.12]],"sector":"semi","confidence":"中"},
+  {"id":"led","name":"LED（チップLED・表示用）","desc":"表示・照光・バックライト用のLED","examples":"チップLED, 砲弾型LED, RGB LED, 赤外/紫外LED, LEDバックライト",
+   "basket":[["semippi",0.40],["gold",0.22],["silver",0.20],["eleccomp",0.18]],"sector":"semi","confidence":"低"},
+  {"id":"optocoupler","name":"フォトカプラ・光デバイス","desc":"絶縁伝送・位置検出用の光結合部品","examples":"フォトカプラ, フォトIC, フォトインタラプタ, フォトリレー",
+   "basket":[["semippi",0.45],["eleccomp",0.30],["gold",0.15],["resinmfg",0.10]],"sector":"semi","confidence":"低"},
 ]
 
 data = {
