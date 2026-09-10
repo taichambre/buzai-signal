@@ -6,7 +6,7 @@
 仕入先の値上げ・納期回答が相場で裏付けられるかを、交渉前に確認するための道具。
 厳密な予測ではなく「過去に相場が動いた局面ではリードタイムが伸びる傾向があった」という定性的な兆候の提示。
 
-- 公開ページ（GitHub Pages）: `https://<user>.github.io/buzai-signal/`
+- 公開ページ（GitHub Pages）: `https://taichambre.github.io/buzai-signal/`
 - スナップショット（claude.ai Artifact）: https://claude.ai/code/artifact/f9420228-267d-46dd-bb22-5672e6ed2099
 
 ## 構成
