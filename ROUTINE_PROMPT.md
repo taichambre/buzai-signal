@@ -34,6 +34,7 @@ fetch.py で相場データも取得し、サイトを再生成して git push �
 - 銅 / アルミ / ニッケル / すず / 金 / 銀 の直近の価格水準と週間・月間の変化、材料相場のニュース
 - DRAM / NAND / HBM の契約価格・スポット・リードタイム・アロケーション状況
 - MLCC・チップ抵抗・インダクタなど受動部品の供給・リードタイム・値上げ
+- 個別半導体（ダイオード / ツェナー / トランジスタ / MOSFET / チップLED / フォトカプラ）のリードタイム・値上げ・欠品
 - MCU / 電源IC(PMIC) / アナログIC のリードタイム
 - 銅張積層板(CCL) / FR-4 / プリプレグ / エポキシ樹脂 / 銅箔 / ガラスクロス の供給・価格
 - エンプラ（PA / PBT / PPS / PC / LCP）・汎用樹脂の価格・供給
@@ -73,7 +74,8 @@ conductor（銅・導体系）, solder（はんだ・実装材料）, aluminum�
 precious（貴金属・電極系）, resin_gp（汎用樹脂）, resin_thermoset（熱硬化・高機能樹脂）,
 substrate（基材・積層板）, pcb_assy（プリント基板・実装前）, sheetmetal（鋼材・板金）,
 harness（ケーブル・ワイヤーハーネス）, memory（メモリ）, logic（ロジック/MCU/アナログ半導体）,
-passive（受動部品）
+passive（受動部品・コンデンサ/インダクタ）, resistor（抵抗器）, diode_sig（ダイオード・ツェナー）,
+transistor（トランジスタ・MOSFET）, led（LED・チップLED）, optocoupler（フォトカプラ・光デバイス）
 
 JSON として妥当か必ず確認する（python3 -c "import json;json.load(open('news.json'))"）。
 
